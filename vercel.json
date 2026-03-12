@@ -7,6 +7,10 @@
   ],
   "routes": [
     {
+      "src": "/media/(.*)",
+      "dest": "my_portfolio/wsgi.py"
+    },
+    {
       "src": "/(.*)",
       "dest": "my_portfolio/wsgi.py"
     }
