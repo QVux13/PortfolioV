@@ -1,0 +1,420 @@
+{% extends 'core/base.html' %}
+
+{% block title %}About Me{% endblock %}
+
+{% block content %}
+<style>
+    .about-section {
+        padding: 2.5rem 3rem;
+    }
+    
+    .section-title-main {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 2.5rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-title-main span {
+        color: #14b8a6;
+    }
+    
+    .section-title-main::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: #14b8a6;
+        border-radius: 2px;
+    }
+    
+    .about-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 0.9fr;
+        gap: 2.5rem;
+        margin-bottom: 2.5rem;
+        align-items: start;
+    }
+    
+    .about-text {
+        color: #d1d5db;
+        font-size: 0.95rem;
+        line-height: 1.85;
+    }
+    
+    .about-text p {
+        margin-bottom: 1.2rem;
+    }
+    
+    .info-card {
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(20, 184, 166, 0.02) 100%);
+        border: 1px solid rgba(20, 184, 166, 0.15);
+        border-radius: 1rem;
+        padding: 1.3rem;
+    }
+    
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.5rem 0;
+    }
+    
+    .info-icon {
+        width: 34px;
+        height: 34px;
+        background: rgba(20, 184, 166, 0.15);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #14b8a6;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+    
+    .info-content {
+        flex: 1;
+    }
+    
+    .info-label {
+        color: #14b8a6;
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-bottom: 0.15rem;
+    }
+    
+    .info-value {
+        color: #e5e7eb;
+        font-size: 0.9rem;
+    }
+    
+    /* Section Divider */
+    .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin: 0.5rem 0 2rem;
+    }
+    
+    .sub-section-header {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+    .sub-section-header i {
+        color: #14b8a6;
+        font-size: 1.1rem;
+        width: 32px;
+        height: 32px;
+        background: rgba(20, 184, 166, 0.12);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sub-section-header span {
+        color: #14b8a6;
+    }
+    
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .service-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 1.5rem;
+        border-radius: 12px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.08) 0%, rgba(20, 184, 166, 0.03) 100%);
+        opacity: 0;
+        transition: opacity 0.4s;
+    }
+    
+    .service-card:hover::before {
+        opacity: 1;
+    }
+    
+    .service-card:hover {
+        border-color: rgba(20, 184, 166, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(20, 184, 166, 0.12);
+    }
+    
+    .service-icon {
+        font-size: 2rem;
+        color: #14b8a6;
+        margin-bottom: 0.8rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .service-card h3 {
+        font-size: 1.05rem;
+        color: white;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .service-card p {
+        color: #9ca3af;
+        line-height: 1.65;
+        font-size: 0.85rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.2rem;
+    }
+    
+    .stat-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.08) 0%, rgba(20, 184, 166, 0.03) 100%);
+        opacity: 0;
+        transition: opacity 0.4s;
+    }
+    
+    .stat-card:hover::before {
+        opacity: 1;
+    }
+    
+    .stat-card:hover {
+        border-color: rgba(20, 184, 166, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(20, 184, 166, 0.12);
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+        color: #14b8a6;
+        margin-bottom: 0.7rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stat-card h3 {
+        font-size: 0.88rem;
+        color: #9ca3af;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
+        color: #e5e7eb;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @media (max-width: 768px) {
+        .about-section { padding: 2rem 1.5rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.5rem; }
+        .about-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+        .services-grid { grid-template-columns: 1fr; }
+        .stats-grid { grid-template-columns: 1fr; }
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .about-section { padding: 2rem 2rem; }
+        .about-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+        .services-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .section-title-main { font-size: 1.6rem; }
+    }
+    
+    @media (max-width: 480px) {
+        .about-section { padding: 1.5rem 1rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.3rem; }
+        .about-text { font-size: 0.88rem; }
+        .info-card { padding: 1rem; }
+        .info-item { gap: 0.6rem; }
+        .info-icon { width: 30px; height: 30px; font-size: 0.75rem; }
+        .info-value { font-size: 0.82rem; }
+        .service-card { padding: 1.2rem; }
+        .service-icon { font-size: 1.5rem; }
+        .service-card h3 { font-size: 0.95rem; }
+        .service-card p { font-size: 0.8rem; }
+        .stat-card { padding: 1.2rem; }
+        .stat-value { font-size: 1.5rem; }
+        .sub-section-header { font-size: 1.1rem; }
+    }
+</style>
+
+<section class="about-section">
+    <h1 class="section-title-main anim-fade-in">About <span>Me</span></h1>
+    
+    <div class="about-grid">
+        <div class="about-text anim-slide-up">
+            <p>
+                As a Backend Developer, I have built a solid foundation in creating robust and scalable web applications 
+                and RESTful APIs. My expertise spans the full development lifecycle, from design to deployment, 
+                ensuring that the solutions I deliver meet both technical and user needs. I work with various technologies 
+                and frameworks to build efficient server-side applications.
+            </p>
+            <p>
+                In addition to my professional pursuits, I am passionate about continuous learning and staying current with 
+                industry trends. I also enjoy sports, and team-building activities, which enhance my ability 
+                to work effectively in collaborative environments.
+            </p>
+        </div>
+        
+        <div class="info-card anim-slide-up" style="animation-delay: 0.15s;">
+            <div class="info-list">
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="info-content">
+                        <div class="info-label">Age</div>
+                        <div class="info-value">22</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="info-content">
+                        <div class="info-label">Residence</div>
+                        <div class="info-value">{{ profile.location }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-home"></i></div>
+                    <div class="info-content">
+                        <div class="info-label">Address</div>
+                        <div class="info-value">35/2, Me Tri Ha, Nam Tu Liem, Ha Noi</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="info-content">
+                        <div class="info-label">E-mail</div>
+                        <div class="info-value">{{ profile.email }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-phone"></i></div>
+                    <div class="info-content">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">{{ profile.phone }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <hr class="section-divider">
+    
+    <div class="anim-slide-up" style="animation-delay: 0.2s;">
+        <h2 class="sub-section-header">
+            <i class="fas fa-laptop-code"></i>
+            What I <span>Do</span>
+        </h2>
+        
+        <div class="services-grid">
+            <div class="service-card anim-scale-in" style="animation-delay: 0.25s;">
+                <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
+                <h3>Web Development</h3>
+                <p>Specializing in backend development with RESTful APIs and database design, while also handling frontend tasks to create complete web solutions</p>
+            </div>
+            
+            <div class="service-card anim-scale-in" style="animation-delay: 0.35s;">
+                <div class="service-icon"><i class="fas fa-rocket"></i></div>
+                <h3>Deployment & DevOps</h3>
+                <p>Managing application deployment, server configuration, and ensuring smooth operation in production environments</p>
+            </div>
+            
+            <div class="service-card anim-scale-in" style="animation-delay: 0.45s;">
+                <div class="service-icon"><i class="fas fa-brain"></i></div>
+                <h3>Machine Learning Models</h3>
+                <p>Developing and integrating ML models for product recommendations, search optimization, and intelligent chatbot systems</p>
+            </div>
+            
+            <div class="service-card anim-scale-in" style="animation-delay: 0.55s;">
+                <div class="service-icon"><i class="fas fa-flag"></i></div>
+                <h3>Future Plans</h3>
+                <p>Exploring AI technologies and IoT development to expand knowledge in intelligent systems and connected devices</p>
+            </div>
+        </div>
+    </div>
+    
+    <hr class="section-divider">
+    
+    <div class="anim-slide-up" style="animation-delay: 0.3s;">
+        <h2 class="sub-section-header">
+            <i class="fas fa-chart-bar"></i>
+            Fun <span>Facts</span>
+        </h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card anim-scale-in" style="animation-delay: 0.4s;">
+                <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                <h3>Repositories</h3>
+                <div class="stat-value">16</div>
+            </div>
+            
+            <div class="stat-card anim-scale-in" style="animation-delay: 0.5s;">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <h3>Working Hours</h3>
+                <div class="stat-value">2500+</div>
+            </div>
+            
+            <div class="stat-card anim-scale-in" style="animation-delay: 0.6s;">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <h3>Favorite Language</h3>
+                <div class="stat-value">Py</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

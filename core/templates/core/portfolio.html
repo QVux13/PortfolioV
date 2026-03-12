@@ -1,0 +1,290 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Portfolio{% endblock %}
+
+{% block content %}
+<style>
+    .portfolio-section {
+        padding: 2.5rem 3rem;
+    }
+
+    .section-title-main {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title-main span {
+        color: #14b8a6;
+    }
+
+    .section-title-main::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: #14b8a6;
+        border-radius: 2px;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        padding-top: 0.5rem;
+    }
+
+    .filter-tab {
+        background: transparent;
+        border: none;
+        color: #6b7280;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        transition: all 0.3s;
+        font-family: inherit;
+    }
+
+    .filter-tab:hover {
+        color: #d1d5db;
+    }
+
+    .filter-tab.active {
+        color: #14b8a6;
+        background: rgba(20, 184, 166, 0.1);
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+
+    .project-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+
+    .project-image {
+        height: 180px;
+        overflow: hidden;
+        border-radius: 12px;
+        position: relative;
+    }
+
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .project-card:hover .project-image img {
+        transform: scale(1.08);
+    }
+
+    .project-placeholder {
+        height: 180px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.05) 100%);
+        border: 1px solid rgba(20, 184, 166, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: rgba(20, 184, 166, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Overlay on hover */
+    .project-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+        border-radius: 12px;
+    }
+
+    .project-card:hover .project-overlay {
+        opacity: 1;
+    }
+
+    .project-overlay-link {
+        width: 38px;
+        height: 38px;
+        background: rgba(20, 184, 166, 0.85);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        transform: translateY(10px);
+    }
+
+    .project-card:hover .project-overlay-link {
+        transform: translateY(0);
+    }
+
+    .project-overlay-link:hover {
+        background: #14b8a6;
+        transform: scale(1.1) translateY(0);
+    }
+
+    .project-info {
+        padding: 0.9rem 0.2rem;
+    }
+
+    .project-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 0.2rem;
+    }
+
+    .project-meta {
+        color: #6b7280;
+        font-size: 0.8rem;
+    }
+
+    @media (max-width: 1024px) {
+        .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+        .portfolio-section { padding: 2rem 1.5rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.5rem; }
+        .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .filter-tabs { gap: 0.3rem; }
+        .filter-tab { font-size: 0.8rem; padding: 0.35rem 0.6rem; }
+        .project-image, .project-placeholder { height: 140px; }
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .portfolio-section { padding: 2rem; }
+        .section-title-main { font-size: 1.6rem; }
+        .project-image, .project-placeholder { height: 160px; }
+    }
+    
+    @media (max-width: 480px) {
+        .portfolio-section { padding: 1.5rem 1rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.3rem; }
+        .projects-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+        .project-image, .project-placeholder { height: 180px; }
+        .project-title { font-size: 0.92rem; }
+        .project-meta { font-size: 0.75rem; }
+        .filter-tab { font-size: 0.78rem; }
+    }
+</style>
+
+<section class="portfolio-section">
+    <h1 class="section-title-main anim-fade-in"><span>Portfolio</span></h1>
+
+    <div class="filter-tabs anim-slide-up" style="animation-delay: 0.1s;">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="Web App">Web Apps</button>
+        <button class="filter-tab" data-filter="API">APIs</button>
+        <button class="filter-tab" data-filter="Website">Websites</button>
+    </div>
+
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-card anim-scale-in" style="animation-delay: {{ forloop.counter0|floatformat:0 }}s;" data-category="{{ project.category }}">
+            {% if project.image %}
+            <div class="project-image">
+                <img src="{{ project.image }}" alt="{{ project.title }}">
+                <div class="project-overlay">
+                    {% if project.live_demo %}
+                    <a href="{{ project.live_demo }}" target="_blank" class="project-overlay-link" title="Live Demo">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                    {% endif %}
+                    {% if project.github_link %}
+                    <a href="{{ project.github_link }}" target="_blank" class="project-overlay-link" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="project-placeholder">
+                <i class="fas fa-code"></i>
+                <div class="project-overlay">
+                    {% if project.live_demo %}
+                    <a href="{{ project.live_demo }}" target="_blank" class="project-overlay-link" title="Live Demo">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                    {% endif %}
+                    {% if project.github_link %}
+                    <a href="{{ project.github_link }}" target="_blank" class="project-overlay-link" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="project-info">
+                <h3 class="project-title">{{ project.title }}</h3>
+                <p class="project-meta">{{ project.category }} · {{ project.tech_stack }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<script>
+    // Filter functionality
+    const tabs = document.querySelectorAll('.filter-tab');
+    const cards = document.querySelectorAll('.project-card');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const filter = tab.dataset.filter;
+
+            cards.forEach(card => {
+                if (filter === 'all' || card.dataset.category === filter) {
+                    card.style.display = '';
+                    card.style.animation = 'scaleIn 0.4s ease forwards';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Staggered animation on load
+    cards.forEach((card, i) => {
+        card.style.animationDelay = (0.15 + i * 0.1) + 's';
+    });
+</script>
+{% endblock %}
