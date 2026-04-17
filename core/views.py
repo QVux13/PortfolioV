@@ -81,7 +81,7 @@ PROJECTS = [
         'description': 'Personal portfolio website showcasing projects and skills. Built with Django and deployed on Vercel.',
         'category': 'Website',
         'tech_stack': 'Django, Tailwind CSS',
-        'image': '/media/projects/portfolio.jpg',
+        'image': '/media/projects/portfolio.png',
         'github_link': 'https://github.com/yourusername/portfolio',
         'live_demo': '',
     },
