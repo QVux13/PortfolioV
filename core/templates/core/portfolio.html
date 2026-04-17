@@ -83,7 +83,7 @@
     }
 
     .project-image {
-        height: 180px;
+        aspect-ratio: 16 / 9;
         overflow: hidden;
         border-radius: 12px;
         position: relative;
@@ -101,7 +101,7 @@
     }
 
     .project-placeholder {
-        height: 180px;
+        aspect-ratio: 16 / 9;
         border-radius: 12px;
         background: linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.05) 100%);
         border: 1px solid rgba(20, 184, 166, 0.2);
@@ -209,14 +209,17 @@
 
     <div class="filter-tabs anim-slide-up" style="animation-delay: 0.1s;">
         <button class="filter-tab active" data-filter="all">All</button>
-        <button class="filter-tab" data-filter="Web App">Web Apps</button>
-        <button class="filter-tab" data-filter="API">APIs</button>
-        <button class="filter-tab" data-filter="Website">Websites</button>
+        <button class="filter-tab" data-filter="Web Apps">Web Apps</button>
+        <button class="filter-tab" data-filter="UI/UX">UI/UX</button>
+        <button class="filter-tab" data-filter="Models">Models</button>
+        <button class="filter-tab" data-filter="APIs">APIs</button>
+        <button class="filter-tab" data-filter="IoT">IoT</button>
+        <button class="filter-tab" data-filter="Data Science">Data Science</button>
     </div>
 
     <div class="projects-grid">
         {% for project in projects %}
-        <div class="project-card anim-scale-in" style="animation-delay: {{ forloop.counter0|floatformat:0 }}s;" data-category="{{ project.category }}">
+        <div class="project-card anim-scale-in" style="animation-delay: {{ forloop.counter0|floatformat:0 }}s;" data-categories="{{ project.categories|join:',' }}">
             {% if project.image %}
             <div class="project-image">
                 <img src="{{ project.image }}" alt="{{ project.title }}">
@@ -253,7 +256,7 @@
 
             <div class="project-info">
                 <h3 class="project-title">{{ project.title }}</h3>
-                <p class="project-meta">{{ project.category }} · {{ project.tech_stack }}</p>
+                <p class="project-meta">{{ project.categories|join:', ' }} · {{ project.tech_stack }}</p>
             </div>
         </div>
         {% endfor %}
@@ -272,7 +275,8 @@
             const filter = tab.dataset.filter;
 
             cards.forEach(card => {
-                if (filter === 'all' || card.dataset.category === filter) {
+                const categories = card.dataset.categories.split(',').map(c => c.trim());
+                if (filter === 'all' || categories.includes(filter)) {
                     card.style.display = '';
                     card.style.animation = 'scaleIn 0.4s ease forwards';
                 } else {
