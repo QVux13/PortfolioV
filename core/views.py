@@ -46,13 +46,13 @@ EXPERIENCE = [
     {
         'position': 'Python Developer',
         'company': 'Newwave Solutions Joint Stock Company',
-        'year': 'Dec 2024 - Jul 2025',
+        'year': 'Jul 2024 - Jul 2025',
         'description': '• Analysis of requirements\n• Japanese web application development\n• Write code using Python with Django, Flask, FastAPI frameworks'
     },
     {
         'position': 'Junior Backend Developer',
         'company': 'Tumiki',
-        'year': 'Jul 2025 - Jan 2026',
+        'year': 'Jul 2025 - Mar 2026',
         'description': '• Analysis of requirements\n• Geospatial web application development\n• Build HRM system using FastAPI and Dart\n• Develop Inuka Education Service backend using FastAPI and PostgreSQL'
     },
 ]
