@@ -10,887 +10,786 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,300&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* ===========================
-           RESET & BASE
-        =========================== */
-        *, *::before, *::after {
-            margin: 0; padding: 0; box-sizing: border-box;
+        /* ============================
+           RESET & TOKENS
+        ============================ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --teal:     #14b8a6;
+            --teal-lt:  #2dd4bf;
+            --cyan:     #06b6d4;
+            --indigo:   #6366f1;
+            --purple:   #a78bfa;
+            --bg-dark:  #0d0d12;
+            --bg-card:  #13131a;
+            --bg-side:  #0f0f16;
+            --border:   rgba(255,255,255,0.06);
+            --text-1:   #f1f5f9;
+            --text-2:   #94a3b8;
+            --text-3:   #475569;
+            --radius-lg: 1.75rem;
+            --radius-md: 0.875rem;
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background: url('/media/Gemini_Generated_Image_k6pfn4k6pfn4k6pf.png') center/cover no-repeat fixed;
-            color: white;
-            position: relative;
-            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-dark) url('/media/Gemini_Generated_Image_k6pfn4k6pfn4k6pf.png') center/cover no-repeat fixed;
+            color: var(--text-1);
             height: 100vh;
             overflow: hidden;
-            padding: 2.5rem;
+            padding: 1.75rem;
+            position: relative;
         }
 
-        /* Soft vignette overlay */
+        /* Tinted overlay over bg image */
         body::before {
             content: '';
-            position: fixed; inset: 0;
+            position: fixed; inset: 0; z-index: 0;
             background:
-                radial-gradient(ellipse at 5% 15%, rgba(20,184,166,0.07) 0%, transparent 50%),
-                radial-gradient(ellipse at 95% 85%, rgba(99,102,241,0.07) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.25) 100%);
-            pointer-events: none; z-index: 1;
+                linear-gradient(135deg, rgba(13,13,18,0.78) 0%, rgba(13,13,18,0.65) 100%);
         }
 
-        /* Floating ambient orbs */
-        body::after {
-            content: '';
-            position: fixed; inset: 0;
-            background-image:
-                radial-gradient(circle at 8% 25%, rgba(20,184,166,0.06) 100px, transparent 100px),
-                radial-gradient(circle at 92% 70%, rgba(99,102,241,0.05) 150px, transparent 150px),
-                radial-gradient(circle at 50% 95%, rgba(6,182,212,0.04) 120px, transparent 120px);
-            background-repeat: no-repeat;
-            pointer-events: none; z-index: 1;
-            animation: ambientPulse 12s ease-in-out infinite alternate;
+        /* Ambient colour blobs */
+        .bg-blobs {
+            position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+        }
+        .bg-blobs span {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0;
+            animation: blobFloat 18s ease-in-out infinite alternate;
+        }
+        .bg-blobs span:nth-child(1) {
+            width: 520px; height: 520px;
+            background: radial-gradient(circle, rgba(20,184,166,.18), transparent 70%);
+            top: -15%; left: -10%; animation-delay: 0s;
+        }
+        .bg-blobs span:nth-child(2) {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,.14), transparent 70%);
+            bottom: -10%; right: -5%; animation-delay: 4s;
+        }
+        .bg-blobs span:nth-child(3) {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(6,182,212,.12), transparent 70%);
+            top: 40%; right: 30%; animation-delay: 8s;
+        }
+        @keyframes blobFloat {
+            0%   { opacity: 0.6; transform: translateY(0) scale(1); }
+            50%  { opacity: 1;   transform: translateY(-40px) scale(1.08); }
+            100% { opacity: 0.6; transform: translateY(20px) scale(0.95); }
         }
 
-        @keyframes ambientPulse {
-            from { opacity: 0.8; }
-            to { opacity: 1.2; }
-        }
-
-        /* ===========================
-           LAYOUT CONTAINER
-        =========================== */
+        /* ============================
+           LAYOUT SHELL
+        ============================ */
         .portfolio-container {
-            max-width: 1300px;
+            position: relative; z-index: 10;
+            max-width: 1320px;
             margin: 0 auto;
-            background: rgba(18, 18, 22, 0.96);
-            border-radius: 1.8rem;
+            height: calc(100vh - 3.5rem);
+            display: flex;
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            display: flex;
-            height: calc(100vh - 5rem);
             box-shadow:
-                0 30px 80px rgba(0,0,0,0.6),
-                0 0 0 1px rgba(255,255,255,0.05),
-                inset 0 1px 0 rgba(255,255,255,0.06);
-            position: relative;
-            z-index: 10;
+                0 40px 100px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(255,255,255,0.045),
+                inset 0 1px 0 rgba(255,255,255,0.05);
         }
 
-        /* ===========================
-           SIDEBAR — GLASSMORPHISM
-        =========================== */
+        /* ============================
+           SIDEBAR
+        ============================ */
         .sidebar {
+            width: 310px; flex-shrink: 0;
+            background: var(--bg-side);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            overflow-y: auto; overflow-x: hidden;
             position: relative;
-            width: 340px;
-            height: 100%;
-            background: linear-gradient(
-                160deg,
-                rgba(45, 212, 191, 0.06) 0%,
-                rgba(30, 30, 38, 0.98) 30%,
-                rgba(20, 20, 26, 0.99) 100%
-            );
-            border-right: 1px solid rgba(255,255,255,0.06);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-            padding: 2rem 1.5rem;
-            flex-shrink: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-            backdrop-filter: blur(20px);
         }
 
-        /* Sidebar decorative vertical gradient line */
-        .sidebar::after {
+        /* Subtle left-edge gradient accent */
+        .sidebar::before {
             content: '';
-            position: absolute;
-            top: 20%; bottom: 20%; right: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(20,184,166,0.4), transparent);
+            position: absolute; top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                var(--teal) 25%,
+                var(--cyan) 55%,
+                var(--indigo) 80%,
+                transparent 100%);
+            opacity: 0.6;
         }
 
-        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar { width: 3px; }
         .sidebar::-webkit-scrollbar-track { background: transparent; }
-        .sidebar::-webkit-scrollbar-thumb { background: rgba(20,184,166,0.3); border-radius: 3px; }
-        .sidebar::-webkit-scrollbar-thumb:hover { background: rgba(20,184,166,0.5); }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(20,184,166,0.25); border-radius: 2px; }
 
         .sidebar-content {
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            padding: 1rem 1.2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            width: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+            padding: 2rem 1.6rem 1.5rem;
+            flex: 1; height: 100%;
         }
 
-        /* ===========================
-           AVATAR
-        =========================== */
+        /* ============================
+           AVATAR SYSTEM
+        ============================ */
         .avatar-wrapper {
             position: relative;
-            width: 200px; height: 200px;
-            margin: 0 auto 1.5rem;
-            display: flex; align-items: center; justify-content: center;
+            width: 148px; height: 148px;
+            margin: 0 auto 1.4rem;
+            flex-shrink: 0;
         }
 
-        /* Rotating dashed ring */
-        .avatar-wrapper::before {
-            content: '';
-            position: absolute;
-            top: -10px; left: -10px; right: -10px; bottom: -10px;
-            border: 2px dashed rgba(20,184,166,0.35);
-            border-radius: 50%;
-            animation: rotateDots 25s linear infinite;
-        }
-
-        /* Glow ring */
-        .avatar-wrapper::after {
-            content: '';
-            position: absolute; inset: -4px;
+        /* Spinning gradient ring */
+        .avatar-ring {
+            position: absolute; inset: -5px;
             border-radius: 50%;
             background: conic-gradient(
                 from 0deg,
-                transparent 0%,
-                rgba(20,184,166,0.6) 30%,
-                transparent 60%,
-                rgba(6,182,212,0.4) 80%,
-                transparent 100%
+                var(--teal),
+                var(--cyan),
+                var(--indigo),
+                var(--purple),
+                var(--teal)
             );
-            animation: rotateDots 4s linear infinite;
-            filter: blur(6px);
-            opacity: 0.7;
+            animation: ringSpinFast 4s linear infinite;
+            z-index: 0;
+        }
+        .avatar-ring-mask {
+            position: absolute; inset: 3px;
+            border-radius: 50%; background: var(--bg-side); z-index: 1;
         }
 
-        @keyframes rotateDots { to { transform: rotate(360deg); } }
+        @keyframes ringSpinFast { to { transform: rotate(360deg); } }
+
+        /* Outer dashed slow ring */
+        .avatar-dashed {
+            position: absolute; inset: -16px;
+            border-radius: 50%;
+            border: 1.5px dashed rgba(20,184,166,0.25);
+            animation: ringSpinSlow 28s linear infinite reverse;
+        }
+        @keyframes ringSpinSlow { to { transform: rotate(360deg); } }
+
+        /* Status dot */
+        .avatar-status {
+            position: absolute; bottom: 8px; right: 8px; z-index: 5;
+            width: 14px; height: 14px;
+            background: #22c55e;
+            border-radius: 50%;
+            border: 2.5px solid var(--bg-side);
+            box-shadow: 0 0 8px rgba(34,197,94,0.7);
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+        @keyframes statusPulse {
+            0%,100% { box-shadow: 0 0 8px rgba(34,197,94,0.6); }
+            50%      { box-shadow: 0 0 16px rgba(34,197,94,1); }
+        }
 
         .avatar {
-            width: 188px; height: 188px;
-            border-radius: 50%;
-            border: 3px solid rgba(20,184,166,0.4);
-            box-shadow:
-                0 0 30px rgba(20,184,166,0.2),
-                0 15px 40px rgba(0,0,0,0.4);
-            object-fit: cover;
-            position: relative; z-index: 2;
-            transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            border-radius: 50%; object-fit: cover;
+            z-index: 2;
         }
-
-        .avatar:hover { transform: scale(1.04); }
-
         .avatar-placeholder {
-            width: 188px; height: 188px;
-            border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.15);
-            background: #2a2a2a;
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            border-radius: 50%; background: #1e1e2a;
             display: flex; align-items: center; justify-content: center;
-            font-size: 4rem; color: rgba(255,255,255,0.4);
-            position: relative; z-index: 2;
+            font-size: 3.5rem; color: var(--text-3); z-index: 2;
         }
 
-        /* ===========================
+        /* ============================
            SIDEBAR TEXT
-        =========================== */
-        .sidebar h2 {
+        ============================ */
+        .sidebar-name {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.55rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 0.3rem;
-            letter-spacing: -0.02em;
+            font-size: 1.35rem; font-weight: 800;
+            color: var(--text-1); letter-spacing: -0.03em;
+            margin-bottom: 0.2rem;
         }
 
-        .sidebar-subtitle {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.9rem;
-            margin-bottom: 0.12rem;
-            font-weight: 400;
+        .sidebar-location {
+            color: var(--text-3); font-size: 0.78rem;
+            margin-bottom: 0.75rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+        }
+        .sidebar-location i { color: var(--teal); font-size: 0.7rem; }
+
+        .sidebar-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(99,102,241,0.08));
+            border: 1px solid rgba(20,184,166,0.22);
+            color: var(--teal-lt); font-size: 0.75rem; font-weight: 600;
+            padding: 0.3rem 1rem; border-radius: 2rem;
+            letter-spacing: 0.04em; margin-bottom: 1.4rem;
+        }
+        .sidebar-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            background: var(--teal); border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
         }
 
-        .sidebar-title-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(6,182,212,0.1));
-            border: 1px solid rgba(20,184,166,0.25);
-            color: #2dd4bf;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.25rem 0.9rem;
-            border-radius: 2rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.03em;
+        /* Thin divider */
+        .sidebar-divider {
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 0.1rem 0 1.1rem;
         }
 
-        /* ===========================
+        /* ============================
            SOCIAL LINKS
-        =========================== */
+        ============================ */
         .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 0.35rem;
-            margin-bottom: 1.8rem;
+            display: flex; gap: 0.5rem;
+            justify-content: center; margin-bottom: 1.4rem;
         }
 
         .social-links a {
-            width: 38px; height: 38px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 50%;
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.6);
+            color: var(--text-3); font-size: 0.95rem;
             text-decoration: none;
-            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-            font-size: 1.05rem;
+            transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
             position: relative; overflow: hidden;
         }
 
-        .social-links a::before {
+        .social-links a::after {
             content: '';
             position: absolute; inset: 0;
-            background: linear-gradient(135deg, rgba(20,184,166,0.3), rgba(6,182,212,0.2));
-            border-radius: 50%;
-            opacity: 0; transition: opacity 0.35s;
+            background: linear-gradient(135deg, var(--teal), var(--indigo));
+            opacity: 0; transition: opacity 0.28s;
         }
+        .social-links a i { position: relative; z-index: 1; transition: color 0.28s; }
+        .social-links a:hover::after { opacity: 1; }
+        .social-links a:hover { border-color: transparent; transform: translateY(-3px) scale(1.08); box-shadow: 0 6px 20px rgba(20,184,166,0.3); }
+        .social-links a:hover i { color: white; }
 
-        .social-links a:hover::before { opacity: 1; }
-        .social-links a:hover {
-            color: white; border-color: rgba(20,184,166,0.5);
-            transform: translateY(-4px) scale(1.1);
-            box-shadow: 0 6px 20px rgba(20,184,166,0.3);
+        /* ============================
+           CONTACT INFO MINI
+        ============================ */
+        .sidebar-info {
+            width: 100%; margin-bottom: 1.3rem;
         }
-
-        /* ===========================
-           DOWNLOAD CV BUTTON
-        =========================== */
-        .btn-resume {
-            display: inline-flex;
-            align-items: center; gap: 0.5rem;
-            padding: 0.8rem 2rem;
-            background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(6,182,212,0.1));
-            border: 1px solid rgba(20,184,166,0.35);
-            border-radius: 2rem;
-            color: #2dd4bf;
+        .sidebar-info-item {
+            display: flex; align-items: center; gap: 0.65rem;
+            padding: 0.45rem 0.6rem;
+            border-radius: 8px; transition: background 0.2s;
             text-decoration: none;
-            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            position: relative; overflow: hidden;
         }
+        .sidebar-info-item:hover { background: rgba(255,255,255,0.04); }
+        .sidebar-info-item i { color: var(--teal); font-size: 0.78rem; width: 14px; text-align: center; flex-shrink: 0; }
+        .sidebar-info-item span { color: var(--text-2); font-size: 0.78rem; text-align: left; word-break: break-all; }
 
+        /* ============================
+           DOWNLOAD CV
+        ============================ */
+        .btn-resume {
+            width: 100%;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.78rem 1.5rem;
+            background: linear-gradient(135deg, var(--teal), var(--cyan));
+            border: none; border-radius: var(--radius-md);
+            color: #0d1a18; font-weight: 700; font-size: 0.85rem;
+            text-decoration: none; letter-spacing: 0.03em;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            position: relative; overflow: hidden;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 20px rgba(20,184,166,0.35);
+        }
         .btn-resume::before {
             content: '';
-            position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(20,184,166,0.2), transparent);
+            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
             transition: left 0.5s;
         }
-
         .btn-resume:hover::before { left: 100%; }
-        .btn-resume:hover {
-            background: linear-gradient(135deg, rgba(20,184,166,0.3), rgba(6,182,212,0.2));
-            border-color: rgba(20,184,166,0.6);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(20,184,166,0.25);
-        }
+        .btn-resume:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(20,184,166,0.5); }
 
         .copyright {
-            color: rgba(255,255,255,0.3);
-            font-size: 0.75rem;
-            margin-top: auto;
-            padding-top: 1rem;
+            color: var(--text-3); font-size: 0.7rem;
+            margin-top: auto; padding-top: 0.75rem;
         }
 
-        /* ===========================
-           RIGHT NAV
-        =========================== */
+        /* ============================
+           RIGHT NAV (vertical icon pill)
+        ============================ */
         .nav-right {
             position: fixed;
-            right: calc((100vw - 1300px) / 2 - 75px);
-            top: 2.5rem;
-            z-index: 150;
-            background: rgba(20,20,26,0.92);
+            right: calc((100vw - 1320px) / 2 - 70px);
+            top: 50%; transform: translateY(-50%);
+            z-index: 200;
+            background: rgba(13,13,18,0.88);
             border: 1px solid rgba(255,255,255,0.07);
             border-radius: 2rem;
-            padding: 1rem 0.7rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
-            backdrop-filter: blur(16px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
+            padding: 0.9rem 0.6rem;
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            box-shadow: 0 16px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
         }
 
-        @media (max-width: 1450px) {
-            .nav-right { right: 1.5rem; top: 2.5rem; }
-            .nav-bottom { right: 1.5rem; bottom: 2.5rem; }
+        @media (max-width: 1480px) {
+            .nav-right { right: 1.25rem; }
+            .nav-bottom { right: 1.25rem; }
         }
 
         .nav-right a {
-            display: flex;
-            align-items: center; justify-content: center;
-            width: 40px; height: 40px;
-            color: rgba(255,255,255,0.35);
-            text-decoration: none;
-            font-size: 1.1rem;
+            width: 38px; height: 38px;
             border-radius: 50%;
-            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-3); font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
             position: relative;
         }
+        .nav-right a:hover, .nav-right a.active { color: var(--teal-lt); }
+        .nav-right a.active {
+            background: rgba(20,184,166,0.12);
+        }
+        /* Tooltip label */
+        .nav-right a::after {
+            content: attr(title);
+            position: absolute; right: calc(100% + 12px);
+            background: rgba(13,13,18,0.95);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-1); font-size: 0.72rem; font-weight: 600;
+            padding: 0.3rem 0.65rem; border-radius: 6px;
+            white-space: nowrap; pointer-events: none;
+            opacity: 0; transform: translateX(6px);
+            transition: all 0.2s;
+        }
+        .nav-right a:hover::after { opacity: 1; transform: translateX(0); }
 
-        .nav-right a::before {
+        .nav-dot {
+            width: 3px; height: 3px; border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            margin: 0.1rem 0;
+        }
+
+        /* Active indicator - animated bar */
+        .nav-right a.active::before {
             content: '';
-            position: absolute; inset: 0; border-radius: 50%;
-            background: rgba(20,184,166,0.1);
-            transform: scale(0); transition: transform 0.3s;
+            position: absolute; left: -1px; top: 50%; transform: translateY(-50%);
+            width: 3px; height: 18px; border-radius: 2px;
+            background: linear-gradient(to bottom, var(--teal), var(--cyan));
+            box-shadow: 0 0 8px var(--teal);
         }
 
-        .nav-right a:hover::before, .nav-right a.active::before { transform: scale(1); }
-        .nav-right a:hover, .nav-right a.active {
-            color: #2dd4bf;
-            transform: scale(1.1);
-        }
-
-        /* Active indicator dot */
-        .nav-right a.active::after {
-            content: '';
-            position: absolute;
-            right: -2px; top: 50%; transform: translateY(-50%);
-            width: 4px; height: 4px;
-            background: #14b8a6;
-            border-radius: 50%;
-            box-shadow: 0 0 6px rgba(20,184,166,0.8);
-        }
-
-        .nav-divider {
-            width: 20px; height: 1px;
-            background: rgba(255,255,255,0.08);
-            margin: 0.2rem 0;
-        }
-
-        /* ===========================
-           BOTTOM NAV
-        =========================== */
+        /* ============================
+           BOTTOM NAV (prev/next)
+        ============================ */
         .nav-bottom {
             position: fixed;
-            right: calc((100vw - 1300px) / 2 - 75px);
-            bottom: 2.5rem;
-            z-index: 150;
-            background: rgba(20,20,26,0.92);
+            right: calc((100vw - 1320px) / 2 - 70px);
+            bottom: 1.75rem; z-index: 200;
+            background: rgba(13,13,18,0.88);
             border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 2rem;
-            padding: 0.7rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            backdrop-filter: blur(16px);
+            border-radius: 2rem; padding: 0.6rem;
+            display: flex; flex-direction: column; gap: 0.3rem;
+            box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
         }
-
         .nav-bottom button {
-            width: 40px; height: 40px;
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.35);
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s;
+            width: 36px; height: 36px;
+            background: transparent; border: none;
+            color: var(--text-3); font-size: 0.9rem;
+            cursor: pointer; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
+            transition: all 0.25s;
         }
-
-        .nav-bottom button:hover:not([disabled]) {
-            color: #2dd4bf;
-            background: rgba(20,184,166,0.1);
-            transform: scale(1.1);
+        .nav-bottom button:hover:not(:disabled) {
+            color: var(--teal-lt); background: rgba(20,184,166,0.1);
         }
+        .nav-bottom button:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        .nav-bottom button:disabled,
-        .nav-bottom button[data-disabled="true"] {
-            opacity: 0.2; cursor: not-allowed;
-        }
-
-        /* ===========================
+        /* ============================
            MAIN CONTENT
-        =========================== */
+        ============================ */
         .main-content {
-            flex: 1;
-            height: 100%;
+            flex: 1; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            background: var(--bg-card);
             position: relative;
-            z-index: 2;
-            overflow-y: auto;
-            overflow-x: hidden;
         }
 
-        .main-content::-webkit-scrollbar { width: 5px; }
-        .main-content::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        .main-content::-webkit-scrollbar { width: 4px; }
+        .main-content::-webkit-scrollbar-track { background: transparent; }
         .main-content::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #14b8a6, #06b6d4);
+            background: linear-gradient(to bottom, var(--teal), var(--indigo));
             border-radius: 4px;
         }
-        .main-content::-webkit-scrollbar-thumb:hover { background: #0d9488; }
 
-        /* ===========================
-           CONTENT BOX + PAGE TRANSITIONS
-        =========================== */
+        /* ============================
+           PAGE TRANSITIONS
+        ============================ */
         .content-box {
-            background: transparent;
-            min-height: 100%;
-            position: relative;
-        }
-
-        /* Entering state (default) */
-        .content-box {
-            animation: pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+            min-height: 100%; position: relative;
+            animation: pageEnter 0.38s cubic-bezier(0.4,0,0.2,1) both;
         }
 
         @keyframes pageEnter {
-            from { opacity: 0; transform: translateX(24px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes pageExit {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(-24px); }
+            from { opacity: 1; transform: translateY(0); }
+            to   { opacity: 0; transform: translateY(-12px); }
         }
-
         @keyframes pageEnterReverse {
-            from { opacity: 0; transform: translateX(-24px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity: 0; transform: translateY(-16px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .content-box.exiting { animation: pageExit 0.22s cubic-bezier(0.4, 0, 0.2, 1) both; }
-        .content-box.entering { animation: pageEnter 0.38s cubic-bezier(0.4, 0, 0.2, 1) both; }
-        .content-box.entering-reverse { animation: pageEnterReverse 0.38s cubic-bezier(0.4, 0, 0.2, 1) both; }
+        .content-box.exiting       { animation: pageExit 0.2s cubic-bezier(0.4,0,0.2,1) both; }
+        .content-box.entering      { animation: pageEnter 0.38s cubic-bezier(0.4,0,0.2,1) both; }
+        .content-box.entering-reverse { animation: pageEnterReverse 0.38s cubic-bezier(0.4,0,0.2,1) both; }
 
-        /* ===========================
-           SPA LOADING INDICATOR
-        =========================== */
+        /* ============================
+           SPA PROGRESS BAR
+        ============================ */
         .spa-progress {
-            position: fixed;
-            top: 0; left: 0;
-            width: 0%; height: 2px;
-            background: linear-gradient(90deg, #14b8a6, #06b6d4, #818cf8);
-            z-index: 9999;
-            transition: width 0.25s ease;
-            border-radius: 0 2px 2px 0;
-            box-shadow: 0 0 8px rgba(20,184,166,0.7);
-        }
-
-        /* ===========================
-           CURSOR SPOTLIGHT (desktop only)
-        =========================== */
-        .cursor-spotlight {
-            position: fixed;
-            pointer-events: none;
-            z-index: 5;
-            width: 400px; height: 400px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(20,184,166,0.04) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0;
+            width: 0%; height: 2.5px;
+            background: linear-gradient(90deg, var(--teal), var(--cyan), var(--indigo), var(--purple));
+            background-size: 200% 100%;
+            animation: progressShimmer 1.2s linear infinite;
+            z-index: 9999; border-radius: 0 2px 2px 0;
             opacity: 0;
+            box-shadow: 0 0 10px var(--teal), 0 0 20px rgba(20,184,166,0.4);
+            transition: width 0.25s ease, opacity 0.2s;
+        }
+        @keyframes progressShimmer {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
         }
 
-        /* ===========================
+        /* ============================
+           CURSOR SPOTLIGHT
+        ============================ */
+        .cursor-spotlight {
+            position: fixed; pointer-events: none; z-index: 5;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(20,184,166,0.035) 0%, transparent 65%);
+            transform: translate(-50%, -50%);
+            opacity: 0; transition: opacity 0.4s;
+        }
+
+        /* ============================
            GLOBAL ANIMATION CLASSES
-        =========================== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(25px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.93); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes slideRight {
-            from { opacity: 0; transform: translateX(-25px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+        ============================ */
+        @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+        @keyframes slideUp  { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes scaleIn  { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+        @keyframes slideRight{from{opacity:0;transform:translateX(-22px)} to{opacity:1;transform:translateX(0)} }
 
-        .anim-fade-in { opacity: 0; animation: fadeIn 0.6s ease forwards; }
-        .anim-slide-up { opacity: 0; animation: slideUp 0.6s ease forwards; }
-        .anim-scale-in { opacity: 0; animation: scaleIn 0.5s ease forwards; }
-        .anim-slide-right { opacity: 0; animation: slideRight 0.6s ease forwards; }
+        .anim-fade-in   { opacity:0; animation:fadeIn  0.55s ease forwards; }
+        .anim-slide-up  { opacity:0; animation:slideUp 0.55s ease forwards; }
+        .anim-scale-in  { opacity:0; animation:scaleIn 0.48s ease forwards; }
+        .anim-slide-right{opacity:0; animation:slideRight 0.55s ease forwards; }
 
-        /* ===========================
+        /* ============================
            MOBILE NAV
-        =========================== */
+        ============================ */
         .mobile-nav { display: none; }
 
+        /* ============================
+           RESPONSIVE
+        ============================ */
         @media (max-width: 768px) {
             body { padding: 0; height: auto; min-height: 100vh; overflow: auto; }
-            body::before, body::after { display: none; }
+            body::before { display: none; }
+            .bg-blobs { display: none; }
             .portfolio-container {
-                flex-direction: column; height: auto; min-height: 100vh;
-                border-radius: 0; box-shadow: none;
+                flex-direction: column; height: auto;
+                min-height: 100vh; border-radius: 0; box-shadow: none;
             }
-            .sidebar { width: 100%; height: auto; padding: 2rem 1.5rem; border-radius: 0; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
-            .sidebar::after { display: none; }
-            .sidebar-content { height: auto; padding: 1rem; }
-            .avatar-wrapper { width: 140px; height: 140px; margin-bottom: 1rem; }
-            .avatar, .avatar-placeholder { width: 128px; height: 128px; }
-            .sidebar h2 { font-size: 1.4rem; }
-            .btn-resume { padding: 0.7rem 1.8rem; font-size: 0.85rem; margin-bottom: 1rem; }
-            .copyright { margin-top: 1rem; padding-top: 0.5rem; }
-            .main-content { height: auto; flex: 1; overflow-y: visible; min-height: 60vh; }
+            .sidebar {
+                width: 100%; border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .sidebar::before { width: 100%; height: 2px; top: auto; bottom: 0; left: 0; background: linear-gradient(90deg, transparent, var(--teal), transparent); }
+            .sidebar-content { padding: 1.75rem 1.5rem 1.25rem; }
+            .avatar-wrapper { width: 110px; height: 110px; }
             .nav-right { display: none; }
             .nav-bottom { display: none; }
+            .main-content { height: auto; min-height: 60vh; overflow-y: visible; }
             .mobile-nav {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%;
-                background: rgba(18,18,22,0.97);
-                border-top: 1px solid rgba(255,255,255,0.07);
+                background: rgba(13,13,18,0.97); backdrop-filter: blur(20px);
+                border-top: 1px solid var(--border);
                 justify-content: space-around; align-items: center;
-                padding: 0.5rem 0; z-index: 200;
-                box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
-                backdrop-filter: blur(16px);
+                padding: 0.55rem 0; z-index: 200;
+                box-shadow: 0 -4px 30px rgba(0,0,0,0.5);
             }
             .mobile-nav a {
                 display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
-                color: rgba(255,255,255,0.4); text-decoration: none;
-                font-size: 1.15rem; padding: 0.4rem 0.8rem; border-radius: 8px;
-                transition: all 0.3s;
+                color: var(--text-3); text-decoration: none; font-size: 1.1rem;
+                padding: 0.35rem 0.8rem; border-radius: 10px; transition: all 0.25s;
             }
-            .mobile-nav a span { font-size: 0.6rem; font-weight: 600; }
-            .mobile-nav a.active, .mobile-nav a:hover { color: #2dd4bf; }
+            .mobile-nav a span { font-size: 0.58rem; font-weight: 600; }
+            .mobile-nav a.active, .mobile-nav a:hover { color: var(--teal-lt); }
         }
-
         @media (min-width: 769px) and (max-width: 1024px) {
+            body { padding: 1.25rem; }
+            .portfolio-container { height: calc(100vh - 2.5rem); }
+            .sidebar { width: 255px; }
+            .sidebar-content { padding: 1.5rem 1.2rem 1.25rem; }
+            .avatar-wrapper { width: 120px; height: 120px; }
+            .nav-right { right: 0.75rem; }
+            .nav-bottom { right: 0.75rem; }
+        }
+        @media (min-width: 1025px) and (max-width: 1280px) {
             body { padding: 1.5rem; }
             .portfolio-container { height: calc(100vh - 3rem); }
-            .sidebar { width: 270px; padding: 1.5rem 1rem; }
-            .sidebar-content { padding: 0.5rem; }
-            .avatar-wrapper { width: 150px; height: 150px; margin-bottom: 1rem; }
-            .avatar, .avatar-placeholder { width: 138px; height: 138px; }
-            .sidebar h2 { font-size: 1.3rem; }
-            .sidebar-subtitle { font-size: 0.82rem; }
-            .social-links a { width: 34px; height: 34px; font-size: 1rem; }
-            .btn-resume { padding: 0.65rem 1.6rem; font-size: 0.82rem; }
-            .nav-right { right: 0.8rem; top: 2rem; padding: 0.7rem 0.5rem; }
-            .nav-right a { width: 36px; height: 36px; font-size: 1.05rem; }
-            .nav-bottom { right: 0.8rem; bottom: 2rem; padding: 0.5rem; }
-            .nav-bottom button { width: 36px; height: 36px; font-size: 1.1rem; }
+            .sidebar { width: 280px; }
+            .nav-right { right: 0.9rem; }
+            .nav-bottom { right: 0.9rem; }
         }
-
-        @media (min-width: 1025px) and (max-width: 1280px) {
-            body { padding: 2rem; }
-            .portfolio-container { height: calc(100vh - 4rem); }
-            .sidebar { width: 300px; }
-            .avatar-wrapper { width: 175px; height: 175px; }
-            .avatar, .avatar-placeholder { width: 163px; height: 163px; }
-            .nav-right { right: 1rem; top: 2.5rem; }
-            .nav-bottom { right: 1rem; bottom: 2.5rem; }
-        }
-
         @media (max-width: 480px) {
-            .sidebar { padding: 1.5rem 1rem; }
-            .sidebar-content { padding: 0.5rem; }
-            .avatar-wrapper { width: 110px; height: 110px; margin-bottom: 0.8rem; }
-            .avatar, .avatar-placeholder { width: 100px; height: 100px; }
-            .sidebar h2 { font-size: 1.2rem; margin-bottom: 0.25rem; }
-            .sidebar-subtitle { font-size: 0.8rem; }
-            .social-links { gap: 0.2rem; margin-bottom: 1.2rem; }
-            .social-links a { width: 34px; height: 34px; font-size: 1rem; }
-            .btn-resume { padding: 0.6rem 1.4rem; font-size: 0.8rem; margin-bottom: 0.8rem; }
-            .copyright { font-size: 0.7rem; }
+            .sidebar-content { padding: 1.25rem 1rem 1rem; }
+            .avatar-wrapper { width: 95px; height: 95px; }
+            .sidebar-name { font-size: 1.15rem; }
         }
     </style>
 </head>
 <body>
-    <!-- SPA progress bar -->
+    <div class="bg-blobs"><span></span><span></span><span></span></div>
     <div class="spa-progress" id="spaProgress"></div>
-
-    <!-- Cursor spotlight (desktop) -->
     <div class="cursor-spotlight" id="cursorSpotlight"></div>
 
     <div class="portfolio-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
+
+        <!-- ═══ SIDEBAR ═══ -->
+        <aside class="sidebar">
             <div class="sidebar-content">
+
+                <!-- Avatar -->
                 <div class="avatar-wrapper">
+                    <div class="avatar-dashed"></div>
+                    <div class="avatar-ring"></div>
+                    <div class="avatar-ring-mask"></div>
+                    <div class="avatar-status"></div>
                     {% if profile.avatar %}
-                    <img src="{{ profile.avatar }}" alt="{{ profile.name }}" class="avatar" loading="eager">
+                        <img src="{{ profile.avatar }}" alt="{{ profile.name }}" class="avatar" loading="eager">
                     {% else %}
-                    <div class="avatar-placeholder"><i class="fas fa-user"></i></div>
+                        <div class="avatar-placeholder"><i class="fas fa-user"></i></div>
                     {% endif %}
                 </div>
 
-                <h2>{{ profile.name }}</h2>
-                <p class="sidebar-subtitle">From {{ profile.location }}</p>
-                <span class="sidebar-title-badge">{{ profile.title }}</span>
+                <!-- Name / badge -->
+                <div class="sidebar-name">{{ profile.name }}</div>
+                <div class="sidebar-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ profile.location }}
+                </div>
+                <div class="sidebar-badge">{{ profile.title }}</div>
 
+                <div class="sidebar-divider"></div>
+
+                <!-- Contact mini -->
+                <div class="sidebar-info">
+                    <a href="mailto:{{ profile.email }}" class="sidebar-info-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ profile.email }}</span>
+                    </a>
+                    <a href="tel:{{ profile.phone }}" class="sidebar-info-item">
+                        <i class="fas fa-phone"></i>
+                        <span>{{ profile.phone }}</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <!-- Social -->
                 <div class="social-links">
-                    {% if profile.github %}
-                    <a href="{{ profile.github }}" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                    {% endif %}
-                    {% if profile.linkedin %}
-                    <a href="{{ profile.linkedin }}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    {% endif %}
-                    {% if profile.stackoverflow %}
-                    <a href="{{ profile.stackoverflow }}" target="_blank" title="Stack Overflow"><i class="fab fa-stack-overflow"></i></a>
-                    {% endif %}
-                    {% if profile.instagram %}
-                    <a href="{{ profile.instagram }}" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    {% endif %}
-                    {% if profile.facebook %}
-                    <a href="{{ profile.facebook }}" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    {% endif %}
+                    {% if profile.github %}<a href="{{ profile.github }}" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>{% endif %}
+                    {% if profile.linkedin %}<a href="{{ profile.linkedin }}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>{% endif %}
+                    {% if profile.stackoverflow %}<a href="{{ profile.stackoverflow }}" target="_blank" title="Stack Overflow"><i class="fab fa-stack-overflow"></i></a>{% endif %}
+                    {% if profile.instagram %}<a href="{{ profile.instagram }}" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>{% endif %}
+                    {% if profile.facebook %}<a href="{{ profile.facebook }}" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>{% endif %}
                 </div>
 
+                <!-- Download CV -->
                 <a href="/download-cv/" class="btn-resume">
                     <i class="fas fa-download"></i> Download CV
                 </a>
 
-                <div class="copyright">© 2025 All rights reserved</div>
+                <div class="copyright">© 2025 Nguyen Quang Vu</div>
             </div>
-        </div>
+        </aside>
 
-        <!-- Right Navigation -->
+        <!-- ═══ RIGHT NAV ═══ -->
         <nav class="nav-right" id="navRight">
-            <a href="/" class="spa-nav {% if request.path == '/' %}active{% endif %}" data-path="/" title="Home"><i class="fas fa-home"></i></a>
-            <div class="nav-divider"></div>
+            <a href="/" class="spa-nav {% if request.path == '/' %}active{% endif %}" data-path="/" title="Home"><i class="fas fa-house"></i></a>
+            <div class="nav-dot"></div>
             <a href="/about/" class="spa-nav {% if request.path == '/about/' %}active{% endif %}" data-path="/about/" title="About"><i class="fas fa-user"></i></a>
-            <div class="nav-divider"></div>
-            <a href="/resume/" class="spa-nav {% if request.path == '/resume/' %}active{% endif %}" data-path="/resume/" title="Resume"><i class="fas fa-file-alt"></i></a>
-            <div class="nav-divider"></div>
+            <div class="nav-dot"></div>
+            <a href="/resume/" class="spa-nav {% if request.path == '/resume/' %}active{% endif %}" data-path="/resume/" title="Resume"><i class="fas fa-file-lines"></i></a>
+            <div class="nav-dot"></div>
             <a href="/portfolio/" class="spa-nav {% if request.path == '/portfolio/' %}active{% endif %}" data-path="/portfolio/" title="Portfolio"><i class="fas fa-briefcase"></i></a>
-            <div class="nav-divider"></div>
+            <div class="nav-dot"></div>
             <a href="/contact/" class="spa-nav {% if request.path == '/contact/' %}active{% endif %}" data-path="/contact/" title="Contact"><i class="fas fa-envelope"></i></a>
         </nav>
 
-        <!-- Bottom Navigation -->
+        <!-- ═══ BOTTOM NAV ═══ -->
         <nav class="nav-bottom">
-            <button onclick="navigatePrev()" title="Prev page" id="prevBtn"><i class="fas fa-chevron-up"></i></button>
-            <button onclick="navigateNext()" title="Next page" id="nextBtn"><i class="fas fa-chevron-down"></i></button>
+            <button onclick="navigatePrev()" id="prevBtn" title="Previous"><i class="fas fa-chevron-up"></i></button>
+            <button onclick="navigateNext()" id="nextBtn" title="Next"><i class="fas fa-chevron-down"></i></button>
         </nav>
 
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
+        <!-- ═══ MAIN CONTENT ═══ -->
+        <main class="main-content" id="mainContent">
             <div class="content-box" id="contentBox">
                 {% block content %}{% endblock %}
             </div>
-        </div>
-    </div>
+        </main>
 
-    <!-- Mobile Bottom Nav -->
+    </div><!-- /portfolio-container -->
+
+    <!-- ═══ MOBILE BOTTOM NAV ═══ -->
     <nav class="mobile-nav" id="mobileNav">
-        <a href="/" class="spa-nav {% if request.path == '/' %}active{% endif %}" data-path="/">
-            <i class="fas fa-home"></i><span>Home</span>
-        </a>
-        <a href="/about/" class="spa-nav {% if request.path == '/about/' %}active{% endif %}" data-path="/about/">
-            <i class="fas fa-user"></i><span>About</span>
-        </a>
-        <a href="/resume/" class="spa-nav {% if request.path == '/resume/' %}active{% endif %}" data-path="/resume/">
-            <i class="fas fa-file-alt"></i><span>Resume</span>
-        </a>
-        <a href="/portfolio/" class="spa-nav {% if request.path == '/portfolio/' %}active{% endif %}" data-path="/portfolio/">
-            <i class="fas fa-briefcase"></i><span>Work</span>
-        </a>
-        <a href="/contact/" class="spa-nav {% if request.path == '/contact/' %}active{% endif %}" data-path="/contact/">
-            <i class="fas fa-envelope"></i><span>Contact</span>
-        </a>
+        <a href="/" class="spa-nav {% if request.path == '/' %}active{% endif %}" data-path="/"><i class="fas fa-house"></i><span>Home</span></a>
+        <a href="/about/" class="spa-nav {% if request.path == '/about/' %}active{% endif %}" data-path="/about/"><i class="fas fa-user"></i><span>About</span></a>
+        <a href="/resume/" class="spa-nav {% if request.path == '/resume/' %}active{% endif %}" data-path="/resume/"><i class="fas fa-file-lines"></i><span>Resume</span></a>
+        <a href="/portfolio/" class="spa-nav {% if request.path == '/portfolio/' %}active{% endif %}" data-path="/portfolio/"><i class="fas fa-briefcase"></i><span>Work</span></a>
+        <a href="/contact/" class="spa-nav {% if request.path == '/contact/' %}active{% endif %}" data-path="/contact/"><i class="fas fa-envelope"></i><span>Contact</span></a>
     </nav>
 
     <script>
-    /* =====================================================
+    /* ─────────────────────────────────────────
        SPA NAVIGATION ENGINE
-    ===================================================== */
-    (function() {
+    ───────────────────────────────────────── */
+    (function () {
         const PAGES = ['/', '/about/', '/resume/', '/portfolio/', '/contact/'];
-        const progress = document.getElementById('spaProgress');
-        const contentBox = document.getElementById('contentBox');
-        const mainContent = document.getElementById('mainContent');
+        const bar   = document.getElementById('spaProgress');
+        const box   = document.getElementById('contentBox');
+        const main  = document.getElementById('mainContent');
+        let cur = window.location.pathname;
+        let busy = false;
 
-        let currentPath = window.location.pathname;
-        let isNavigating = false;
-
-        // Progress bar helpers
-        function showProgress(pct) {
-            progress.style.width = pct + '%';
-            progress.style.opacity = '1';
-        }
-        function hideProgress() {
-            progress.style.width = '100%';
-            setTimeout(() => {
-                progress.style.opacity = '0';
-                setTimeout(() => { progress.style.width = '0%'; }, 300);
-            }, 200);
+        function prog(w) { bar.style.width = w + '%'; bar.style.opacity = '1'; }
+        function progDone() {
+            bar.style.width = '100%';
+            setTimeout(() => { bar.style.opacity = '0'; setTimeout(() => bar.style.width = '0%', 300); }, 180);
         }
 
-        // Update nav active states
-        function updateNavActive(path) {
-            document.querySelectorAll('.spa-nav').forEach(a => {
-                a.classList.toggle('active', a.dataset.path === path);
-            });
+        function setNavActive(path) {
+            document.querySelectorAll('.spa-nav').forEach(a => a.classList.toggle('active', a.dataset.path === path));
         }
 
-        // Update prev/next button states
-        function updateNavButtons(path) {
-            const idx = PAGES.indexOf(path);
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            if (prevBtn) prevBtn.dataset.disabled = (idx <= 0) ? 'true' : 'false';
-            if (nextBtn) nextBtn.dataset.disabled = (idx >= PAGES.length - 1) ? 'true' : 'false';
-            if (prevBtn) prevBtn.disabled = (idx <= 0);
-            if (nextBtn) nextBtn.disabled = (idx >= PAGES.length - 1);
+        function setNavBtns(path) {
+            const i = PAGES.indexOf(path);
+            const p = document.getElementById('prevBtn');
+            const n = document.getElementById('nextBtn');
+            if (p) p.disabled = i <= 0;
+            if (n) n.disabled = i >= PAGES.length - 1;
         }
 
-        // Core SPA navigate function
-        async function navigateTo(path, direction = 'forward', pushState = true) {
-            if (isNavigating || path === currentPath) return;
-            isNavigating = true;
+        async function go(path, dir = 'fwd', push = true) {
+            if (busy || path === cur) return;
+            busy = true;
+            prog(15);
 
-            showProgress(20);
-
-            // Exit animation
-            contentBox.classList.remove('entering', 'entering-reverse', 'exiting');
-            contentBox.classList.add('exiting');
-            showProgress(40);
+            box.classList.remove('entering','entering-reverse','exiting');
+            box.classList.add('exiting');
+            prog(35);
 
             try {
-                const res = await fetch(path, {
-                    headers: { 'X-SPA-Request': '1' },
-                    credentials: 'same-origin'
-                });
-                showProgress(75);
-
-                if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+                const res = await fetch(path, { headers: { 'X-SPA-Request': '1' }, credentials: 'same-origin' });
+                prog(70);
+                if (!res.ok) throw new Error(res.status);
                 const html = await res.text();
 
-                // Wait for exit animation
-                await new Promise(r => setTimeout(r, 220));
+                await new Promise(r => setTimeout(r, 210));
 
-                // Swap content
-                contentBox.innerHTML = html;
-                mainContent.scrollTop = 0;
+                box.innerHTML = html;
+                main.scrollTop = 0;
 
-                // Re-execute <script> tags (innerHTML doesn't auto-run them)
-                contentBox.querySelectorAll('script').forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr =>
-                        newScript.setAttribute(attr.name, attr.value)
-                    );
-                    newScript.textContent = oldScript.textContent;
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                /* Re-run injected scripts */
+                box.querySelectorAll('script').forEach(old => {
+                    const s = document.createElement('script');
+                    [...old.attributes].forEach(a => s.setAttribute(a.name, a.value));
+                    s.textContent = old.textContent;
+                    old.replaceWith(s);
                 });
 
+                box.classList.remove('exiting');
+                box.classList.add(dir === 'bk' ? 'entering-reverse' : 'entering');
+                prog(92);
 
-                // Enter animation
-                contentBox.classList.remove('exiting');
-                contentBox.classList.add(direction === 'back' ? 'entering-reverse' : 'entering');
+                if (push) history.pushState({ path }, '', path);
+                cur = path;
+                setNavActive(path);
+                setNavBtns(path);
 
-                showProgress(95);
+                const titles = { '/':'Home','/about/':'About Me','/resume/':'Resume','/portfolio/':'Portfolio','/contact/':'Contact' };
+                document.title = '{{ profile.name }} | ' + (titles[path] || 'Portfolio');
 
-                // Update state
-                if (pushState) history.pushState({ path }, '', path);
-                currentPath = path;
-                updateNavActive(path);
-                updateNavButtons(path);
-
-                // Update page title
-                const titleMap = {
-                    '/': 'Home', '/about/': 'About Me',
-                    '/resume/': 'Resume', '/portfolio/': 'Portfolio', '/contact/': 'Contact'
-                };
-                document.title = '{{ profile.name }} | ' + (titleMap[path] || 'Portfolio');
-
-                // Fire custom event for page scripts (progress bars, filters, etc.)
                 setTimeout(() => {
+                    document.dispatchEvent(new CustomEvent('spa:ready', { detail: { path } }));
                     document.dispatchEvent(new CustomEvent('spa:page-ready', { detail: { path } }));
-                    hideProgress();
-                    isNavigating = false;
-                }, 50);
+                    progDone();
+                    busy = false;
+                }, 60);
 
-            } catch (err) {
-                console.warn('SPA navigation failed, falling back:', err);
-                hideProgress();
-                isNavigating = false;
-                window.location.href = path;
+            } catch (e) {
+                console.warn('[SPA] fallback', e);
+                progDone(); busy = false;
+                location.href = path;
             }
         }
 
-        // Intercept all .spa-nav clicks
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('.spa-nav, .spa-link');
-            if (!link) return;
-
-            const href = link.getAttribute('href') || link.dataset.path;
-            if (!href || href.startsWith('http') || href.startsWith('#') || href === '/download-cv/') return;
-
+        /* Click intercept */
+        document.addEventListener('click', e => {
+            const a = e.target.closest('.spa-nav,.spa-link');
+            if (!a) return;
+            const href = a.getAttribute('href') || a.dataset.path;
+            if (!href || /^https?:/.test(href) || href === '#' || href === '/download-cv/') return;
             e.preventDefault();
-            const idx = PAGES.indexOf(currentPath);
-            const newIdx = PAGES.indexOf(href);
-            const direction = newIdx < idx ? 'back' : 'forward';
-            navigateTo(href, direction);
+            const ci = PAGES.indexOf(cur), ni = PAGES.indexOf(href);
+            go(href, ni < ci ? 'bk' : 'fwd');
         });
 
-        // Browser back/forward
-        window.addEventListener('popstate', function(e) {
-            const path = e.state?.path || window.location.pathname;
-            const oldIdx = PAGES.indexOf(currentPath);
-            const newIdx = PAGES.indexOf(path);
-            navigateTo(path, newIdx < oldIdx ? 'back' : 'forward', false);
+        /* History back/forward */
+        addEventListener('popstate', e => {
+            const path = e.state?.path || location.pathname;
+            const ci = PAGES.indexOf(cur), ni = PAGES.indexOf(path);
+            go(path, ni < ci ? 'bk' : 'fwd', false);
         });
 
-        // Initial state
-        history.replaceState({ path: currentPath }, '', currentPath);
-        updateNavButtons(currentPath);
-
-        /* =====================================================
-           PREV / NEXT navigation
-        ===================================================== */
-        window.navigatePrev = function() {
-            const idx = PAGES.indexOf(currentPath);
-            if (idx > 0) navigateTo(PAGES[idx - 1], 'back');
-        };
-        window.navigateNext = function() {
-            const idx = PAGES.indexOf(currentPath);
-            if (idx < PAGES.length - 1) navigateTo(PAGES[idx + 1], 'forward');
-        };
-
-        /* =====================================================
-           KEYBOARD NAVIGATION (arrow keys)
-        ===================================================== */
-        document.addEventListener('keydown', function(e) {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') window.navigateNext();
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') window.navigatePrev();
+        /* Keyboard */
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigateNext();
+            if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigatePrev();
         });
 
-        /* =====================================================
-           CURSOR SPOTLIGHT (desktop)
-        ===================================================== */
-        const spotlight = document.getElementById('cursorSpotlight');
-        let spotX = 0, spotY = 0, rafPending = false;
+        history.replaceState({ path: cur }, '', cur);
+        setNavBtns(cur);
 
-        document.addEventListener('mousemove', function(e) {
-            spotX = e.clientX; spotY = e.clientY;
-            if (!rafPending) {
-                rafPending = true;
-                requestAnimationFrame(() => {
-                    spotlight.style.left = spotX + 'px';
-                    spotlight.style.top = spotY + 'px';
-                    spotlight.style.opacity = '1';
-                    rafPending = false;
-                });
-            }
+        window.navigatePrev = () => { const i = PAGES.indexOf(cur); if (i > 0) go(PAGES[i-1],'bk'); };
+        window.navigateNext = () => { const i = PAGES.indexOf(cur); if (i < PAGES.length-1) go(PAGES[i+1],'fwd'); };
+
+        /* Cursor spotlight */
+        const spot = document.getElementById('cursorSpotlight');
+        let sx=0,sy=0,raf=false;
+        document.addEventListener('mousemove', e => {
+            sx=e.clientX; sy=e.clientY;
+            if (!raf) { raf=true; requestAnimationFrame(()=>{ spot.style.left=sx+'px'; spot.style.top=sy+'px'; spot.style.opacity='1'; raf=false; }); }
         });
-
-        document.addEventListener('mouseleave', () => { spotlight.style.opacity = '0'; });
+        document.addEventListener('mouseleave', () => spot.style.opacity='0');
 
     })();
     </script>
