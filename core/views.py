@@ -123,22 +123,36 @@ PROJECTS = [
     },
 ]
 
+def _is_spa_request(request):
+    """Check if this is a SPA fetch request (not a full page load)."""
+    return request.headers.get('X-SPA-Request') == '1'
+
 def home(request):
+    if _is_spa_request(request):
+        return render(request, 'core/partials/home_partial.html', {'profile': PROFILE})
     return render(request, 'core/home.html', {'profile': PROFILE})
 
 def about(request):
+    if _is_spa_request(request):
+        return render(request, 'core/partials/about_partial.html', {'profile': PROFILE})
     return render(request, 'core/about.html', {'profile': PROFILE})
 
 def resume(request):
-    return render(request, 'core/resume.html', {
+    ctx = {
         'profile': PROFILE,
         'coding_skills': CODING_SKILLS,
         'education': EDUCATION,
         'experience': EXPERIENCE
-    })
+    }
+    if _is_spa_request(request):
+        return render(request, 'core/partials/resume_partial.html', ctx)
+    return render(request, 'core/resume.html', ctx)
 
 def portfolio(request):
-    return render(request, 'core/portfolio.html', {'profile': PROFILE, 'projects': PROJECTS})
+    ctx = {'profile': PROFILE, 'projects': PROJECTS}
+    if _is_spa_request(request):
+        return render(request, 'core/partials/portfolio_partial.html', ctx)
+    return render(request, 'core/portfolio.html', ctx)
 
 def contact(request):
     success = False
@@ -166,11 +180,10 @@ def contact(request):
         else:
             error = True
 
-    return render(request, 'core/contact.html', {
-        'profile': PROFILE,
-        'success': success,
-        'error': error,
-    })
+    ctx = {'profile': PROFILE, 'success': success, 'error': error}
+    if _is_spa_request(request):
+        return render(request, 'core/partials/contact_partial.html', ctx)
+    return render(request, 'core/contact.html', ctx)
 
 def download_cv(request):
     file_path = os.path.join(django_settings.MEDIA_ROOT, 'resume', 'NguyenQuangVu_CV_Backend.pdf')

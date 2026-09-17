@@ -1,0 +1,240 @@
+<style>
+    .resume-section { padding: 2.5rem 3rem; }
+    .section-title-main {
+        font-size: 2rem; font-weight: 800; color: white;
+        margin-bottom: 2.5rem; position: relative; display: inline-block;
+        font-family: 'Poppins', sans-serif;
+    }
+    .section-title-main span { color: #2dd4bf; }
+    .section-title-main::after {
+        content: ''; position: absolute; bottom: -10px; left: 0;
+        width: 60px; height: 3px;
+        background: linear-gradient(90deg, #14b8a6, #06b6d4); border-radius: 2px;
+    }
+    .resume-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .section-block { margin-bottom: 2rem; }
+    .section-header {
+        font-size: 1.2rem; font-weight: 700; color: white;
+        margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.7rem;
+        font-family: 'Poppins', sans-serif;
+    }
+    .section-header .icon-box {
+        color: #2dd4bf; font-size: 1rem;
+        width: 34px; height: 34px;
+        background: rgba(20,184,166,0.12); border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s;
+    }
+    .section-header:hover .icon-box { background: rgba(20,184,166,0.25); transform: rotate(10deg); }
+    /* Timeline */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+        content: ''; position: absolute; left: 6px; top: 8px; bottom: 8px;
+        width: 2px;
+        background: linear-gradient(to bottom, #14b8a6, rgba(20,184,166,0.1));
+    }
+    .timeline-item { position: relative; margin-bottom: 2rem; padding-left: 1.2rem; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item::before {
+        content: ''; position: absolute; left: -25px; top: 8px;
+        width: 12px; height: 12px;
+        background: #14b8a6;
+        border: 2px solid #1a1a1a;
+        border-radius: 50%; z-index: 2;
+        box-shadow: 0 0 0 3px rgba(20,184,166,0.2);
+        transition: all 0.3s;
+    }
+    .timeline-item:hover::before { box-shadow: 0 0 0 6px rgba(20,184,166,0.15); transform: scale(1.2); }
+    .timeline-year {
+        display: inline-block; color: #2dd4bf; font-size: 0.78rem; font-weight: 700;
+        background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.25);
+        padding: 0.2rem 0.7rem; border-radius: 4px; margin-bottom: 0.5rem;
+        letter-spacing: 0.03em;
+    }
+    .timeline-title { font-size: 1rem; font-weight: 700; color: white; margin-bottom: 0.25rem; }
+    .timeline-subtitle { color: #9ca3af; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 500; }
+    .timeline-description { color: #d1d5db; font-size: 0.85rem; line-height: 1.75; white-space: pre-line; }
+    /* Skills */
+    .skill-item { margin-bottom: 1.3rem; }
+    .skill-item:last-child { margin-bottom: 0; }
+    .skill-header { display: flex; justify-content: space-between; margin-bottom: 0.55rem; }
+    .skill-name { color: #e5e7eb; font-weight: 600; font-size: 0.9rem; }
+    .skill-percentage { color: #2dd4bf; font-size: 0.85rem; font-weight: 700; }
+    .progress-bar-bg {
+        width: 100%; background: rgba(255,255,255,0.06);
+        border-radius: 9999px; height: 7px; overflow: hidden;
+    }
+    .progress-bar {
+        background: linear-gradient(90deg, #14b8a6, #06b6d4, #2dd4bf);
+        height: 100%; border-radius: 9999px;
+        width: 0%;
+        transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative; overflow: hidden;
+    }
+    .progress-bar.animated { /* width set by JS */ }
+    .progress-bar::after {
+        content: '';
+        position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmerBar 2s ease-in-out infinite;
+    }
+    @keyframes shimmerBar {
+        0% { left: -100%; }
+        100% { left: 200%; }
+    }
+    /* Knowledge Tags */
+    .knowledge-grid { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+    .knowledge-tag {
+        background: rgba(20,184,166,0.07);
+        border: 1px solid rgba(20,184,166,0.18);
+        color: #5eead4; padding: 0.4rem 0.85rem;
+        border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+        transition: all 0.3s; letter-spacing: 0.01em; cursor: default;
+    }
+    .knowledge-tag:hover {
+        background: rgba(20,184,166,0.18); border-color: #14b8a6;
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 4px 15px rgba(20,184,166,0.2);
+        color: #2dd4bf;
+    }
+    .section-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 0.5rem 0 2rem; }
+    @media (max-width: 768px) {
+        .resume-section { padding: 2rem 1.5rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.5rem; }
+        .resume-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .resume-section { padding: 2rem; }
+        .resume-grid { grid-template-columns: 1fr; gap: 2rem; }
+        .section-title-main { font-size: 1.6rem; }
+    }
+    @media (max-width: 480px) {
+        .resume-section { padding: 1.5rem 1rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.3rem; }
+        .knowledge-tag { font-size: 0.75rem; padding: 0.35rem 0.65rem; }
+    }
+</style>
+
+<section class="resume-section">
+    <h1 class="section-title-main anim-fade-in">My <span>Resume</span></h1>
+
+    <div class="resume-grid">
+        <!-- Left: Education + Experience -->
+        <div class="anim-slide-up" style="animation-delay: 0.1s;">
+            <div class="section-block">
+                <h2 class="section-header">
+                    <span class="icon-box"><i class="fas fa-graduation-cap"></i></span>
+                    Education
+                </h2>
+                <div class="timeline">
+                    {% for edu in education %}
+                    <div class="timeline-item">
+                        <div class="timeline-year">{{ edu.year }}</div>
+                        <h3 class="timeline-title">{{ edu.degree }}</h3>
+                        <div class="timeline-subtitle">{{ edu.school }}</div>
+                        <p class="timeline-description">{{ edu.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <hr class="section-divider">
+
+            <div class="section-block">
+                <h2 class="section-header">
+                    <span class="icon-box"><i class="fas fa-briefcase"></i></span>
+                    Experience
+                </h2>
+                <div class="timeline">
+                    {% for exp in experience %}
+                    <div class="timeline-item">
+                        <div class="timeline-year">{{ exp.year }}</div>
+                        <h3 class="timeline-title">{{ exp.position }}</h3>
+                        <div class="timeline-subtitle">{{ exp.company }}</div>
+                        <p class="timeline-description">{{ exp.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Skills + Knowledges -->
+        <div class="anim-slide-up" style="animation-delay: 0.2s;">
+            <div class="section-block">
+                <h2 class="section-header">
+                    <span class="icon-box"><i class="fas fa-code"></i></span>
+                    Coding Skills
+                </h2>
+                {% for skill in coding_skills %}
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">{{ skill.name }}</span>
+                        <span class="skill-percentage">{{ skill.percentage }}%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar" data-width="{{ skill.percentage }}"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <hr class="section-divider">
+
+            <div class="section-block">
+                <h2 class="section-header">
+                    <span class="icon-box"><i class="fas fa-lightbulb"></i></span>
+                    Knowledges
+                </h2>
+                <div class="knowledge-grid">
+                    <span class="knowledge-tag">Django</span>
+                    <span class="knowledge-tag">FastAPI</span>
+                    <span class="knowledge-tag">Flask</span>
+                    <span class="knowledge-tag">Node.js</span>
+                    <span class="knowledge-tag">Express</span>
+                    <span class="knowledge-tag">ReactJS</span>
+                    <span class="knowledge-tag">PostgreSQL</span>
+                    <span class="knowledge-tag">MongoDB</span>
+                    <span class="knowledge-tag">SQL Server</span>
+                    <span class="knowledge-tag">Docker</span>
+                    <span class="knowledge-tag">Git</span>
+                    <span class="knowledge-tag">MinioS3</span>
+                    <span class="knowledge-tag">RESTful API</span>
+                    <span class="knowledge-tag">OOP</span>
+                    <span class="knowledge-tag">MVC / MTV</span>
+                    <span class="knowledge-tag">SQLAlchemy</span>
+                    <span class="knowledge-tag">n8n</span>
+                    <span class="knowledge-tag">Postman</span>
+                    <span class="knowledge-tag">Bootstrap</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    function animateBars(container) {
+        const bars = (container || document).querySelectorAll('.progress-bar[data-width]');
+        if (!bars.length) return;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bar = entry.target;
+                    setTimeout(() => {
+                        bar.style.width = bar.dataset.width + '%';
+                    }, 200);
+                    observer.unobserve(bar);
+                }
+            });
+        }, { threshold: 0 });
+        bars.forEach(bar => observer.observe(bar));
+    }
+    // Use rAF to ensure DOM is rendered before observing
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            animateBars();
+        });
+    });
+    document.addEventListener('spa:page-ready', () => animateBars());
+})();
+</script>

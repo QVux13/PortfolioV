@@ -1,0 +1,217 @@
+<style>
+    .portfolio-section { padding: 2.5rem 3rem; }
+    .section-title-main {
+        font-size: 2rem; font-weight: 800; color: white;
+        margin-bottom: 1.5rem; position: relative; display: inline-block;
+        font-family: 'Poppins', sans-serif;
+    }
+    .section-title-main span { color: #2dd4bf; }
+    .section-title-main::after {
+        content: ''; position: absolute; bottom: -10px; left: 0;
+        width: 60px; height: 3px;
+        background: linear-gradient(90deg, #14b8a6, #06b6d4); border-radius: 2px;
+    }
+    /* Filter Tabs */
+    .filter-tabs {
+        display: flex; flex-wrap: wrap; gap: 0.4rem;
+        margin-bottom: 2rem; padding-top: 0.5rem;
+    }
+    .filter-tab {
+        background: transparent; border: 1px solid rgba(255,255,255,0.08);
+        color: #6b7280; font-size: 0.85rem; font-weight: 600;
+        cursor: pointer; padding: 0.4rem 0.9rem; border-radius: 2rem;
+        transition: all 0.3s; font-family: inherit;
+    }
+    .filter-tab:hover { color: #d1d5db; border-color: rgba(255,255,255,0.2); }
+    .filter-tab.active {
+        color: #2dd4bf; background: rgba(20,184,166,0.12);
+        border-color: rgba(20,184,166,0.35);
+        box-shadow: 0 0 12px rgba(20,184,166,0.15);
+    }
+    /* Projects Grid */
+    .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .project-card {
+        border-radius: 14px; overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative; background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+    .project-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(20,184,166,0.15);
+        border-color: rgba(20,184,166,0.2);
+    }
+    .project-image { aspect-ratio: 16/9; overflow: hidden; position: relative; }
+    /* Skeleton loader */
+    .img-skeleton {
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.5s infinite;
+    }
+    @keyframes skeletonShimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    .project-image img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.4s;
+        display: block; opacity: 0;
+    }
+    .project-image img.loaded { opacity: 1; }
+    .project-image img.loaded + .img-skeleton { display: none; }
+    .project-card:hover .project-image img { transform: scale(1.08); }
+    .project-placeholder {
+        aspect-ratio: 16/9; border-radius: 0;
+        background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(6,182,212,0.06));
+        border-bottom: 1px solid rgba(20,184,166,0.15);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 3rem; color: rgba(20,184,166,0.35);
+        position: relative; overflow: hidden;
+    }
+    /* Overlay */
+    .project-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 100%);
+        display: flex; align-items: center; justify-content: center;
+        gap: 0.7rem; opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .project-card:hover .project-overlay { opacity: 1; }
+    .project-overlay-link {
+        width: 40px; height: 40px;
+        background: rgba(20,184,166,0.9);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: white; text-decoration: none; font-size: 0.9rem;
+        transition: all 0.3s;
+        transform: translateY(15px) scale(0.8);
+        backdrop-filter: blur(4px);
+    }
+    .project-card:hover .project-overlay-link {
+        transform: translateY(0) scale(1);
+        transition-delay: 0.05s;
+    }
+    .project-card:hover .project-overlay-link:nth-child(2) { transition-delay: 0.1s; }
+    .project-overlay-link:hover { background: #14b8a6; transform: scale(1.15) translateY(0) !important; box-shadow: 0 4px 15px rgba(20,184,166,0.5); }
+    .project-info { padding: 0.9rem 1rem; }
+    .project-title { font-size: 0.95rem; font-weight: 700; color: white; margin-bottom: 0.25rem; }
+    .project-meta { color: #6b7280; font-size: 0.78rem; }
+    .project-card.hidden { display: none; }
+    @media (max-width: 1024px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+        .portfolio-section { padding: 2rem 1.5rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.5rem; }
+        .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .filter-tabs { gap: 0.3rem; }
+        .filter-tab { font-size: 0.78rem; padding: 0.35rem 0.6rem; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .portfolio-section { padding: 2rem; }
+        .section-title-main { font-size: 1.6rem; }
+    }
+    @media (max-width: 480px) {
+        .portfolio-section { padding: 1.5rem 1rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.3rem; }
+        .projects-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+        .project-title { font-size: 0.9rem; }
+        .project-meta { font-size: 0.73rem; }
+    }
+</style>
+
+<section class="portfolio-section">
+    <h1 class="section-title-main anim-fade-in"><span>Portfolio</span></h1>
+
+    <div class="filter-tabs anim-slide-up" style="animation-delay: 0.1s;">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="Web Apps">Web Apps</button>
+        <button class="filter-tab" data-filter="UI/UX">UI/UX</button>
+        <button class="filter-tab" data-filter="Models">Models</button>
+        <button class="filter-tab" data-filter="APIs">APIs</button>
+        <button class="filter-tab" data-filter="IoT">IoT</button>
+        <button class="filter-tab" data-filter="Data Science">Data Science</button>
+    </div>
+
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-card anim-scale-in" data-categories="{{ project.categories|join:',' }}">
+            {% if project.image %}
+            <div class="project-image">
+                <img
+                    src="{{ project.image }}"
+                    alt="{{ project.title }}"
+                    loading="lazy"
+                    decoding="async"
+                    onload="this.classList.add('loaded')"
+                    onerror="this.classList.add('loaded')"
+                >
+                <div class="img-skeleton"></div>
+                <div class="project-overlay">
+                    {% if project.live_demo %}
+                    <a href="{{ project.live_demo }}" target="_blank" class="project-overlay-link" title="Live Demo">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                    {% endif %}
+                    {% if project.github_link %}
+                    <a href="{{ project.github_link }}" target="_blank" class="project-overlay-link" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="project-placeholder">
+                <i class="fas fa-code"></i>
+                <div class="project-overlay">
+                    {% if project.github_link %}
+                    <a href="{{ project.github_link }}" target="_blank" class="project-overlay-link" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="project-info">
+                <h3 class="project-title">{{ project.title }}</h3>
+                <p class="project-meta">{{ project.categories|join:', ' }} · {{ project.tech_stack }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<script>
+(function() {
+    function initPortfolio(container) {
+        const tabs = (container || document).querySelectorAll('.filter-tab');
+        const cards = (container || document).querySelectorAll('.project-card');
+        if (!tabs.length) return;
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const filter = tab.dataset.filter;
+                let visibleIdx = 0;
+                cards.forEach(card => {
+                    const cats = card.dataset.categories.split(',').map(c => c.trim());
+                    if (filter === 'all' || cats.includes(filter)) {
+                        card.classList.remove('hidden');
+                        card.style.animationDelay = (visibleIdx * 0.07) + 's';
+                        card.style.animation = 'none';
+                        card.offsetHeight; // reflow
+                        card.style.animation = 'scaleIn 0.4s ease forwards';
+                        visibleIdx++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+        });
+        // Stagger on load
+        cards.forEach((card, i) => { card.style.animationDelay = (0.1 + i * 0.07) + 's'; });
+    }
+    initPortfolio();
+    document.addEventListener('spa:page-ready', () => initPortfolio());
+})();
+</script>

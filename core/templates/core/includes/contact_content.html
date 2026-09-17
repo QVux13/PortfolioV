@@ -1,0 +1,180 @@
+<style>
+    .contact-section { padding: 2.5rem 3rem; }
+    .section-title-main {
+        font-size: 2rem; font-weight: 800; color: white;
+        margin-bottom: 2.5rem; position: relative; display: inline-block;
+        font-family: 'Poppins', sans-serif;
+    }
+    .section-title-main span { color: #2dd4bf; }
+    .section-title-main::after {
+        content: ''; position: absolute; bottom: -10px; left: 0;
+        width: 60px; height: 3px;
+        background: linear-gradient(90deg, #14b8a6, #06b6d4); border-radius: 2px;
+    }
+    .contact-grid { display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 2rem; }
+    .info-cards { display: flex; flex-direction: column; gap: 0.9rem; }
+    .info-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px; padding: 1.2rem;
+        text-align: center; transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        position: relative; overflow: hidden;
+    }
+    .info-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0;
+        width: 100%; height: 2px;
+        background: linear-gradient(90deg, #14b8a6, #06b6d4);
+        transform: scaleX(0); transform-origin: left;
+        transition: transform 0.35s;
+    }
+    .info-card:hover::before { transform: scaleX(1); }
+    .info-card:hover {
+        border-color: rgba(20,184,166,0.25);
+        background: rgba(20,184,166,0.05);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(20,184,166,0.1);
+    }
+    .info-card-icon { color: #2dd4bf; font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .info-card-text { color: white; font-size: 0.85rem; font-weight: 600; word-break: break-word; }
+    .contact-right { display: flex; flex-direction: column; gap: 1.5rem; }
+    .map-container {
+        border-radius: 12px; overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08); height: 160px; flex-shrink: 0;
+    }
+    .map-container iframe { width: 100%; height: 100%; border: none; display: block; }
+    .form-section-title { font-size: 1.15rem; font-weight: 700; color: white; margin: 0; font-family: 'Poppins', sans-serif; }
+    .form-section-title span { color: #2dd4bf; }
+    .contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-left { display: flex; flex-direction: column; gap: 1rem; }
+    .form-right { display: flex; flex-direction: column; }
+    .form-input, .form-textarea {
+        width: 100%; background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.09);
+        border-radius: 10px; padding: 0.8rem 1rem;
+        color: white; font-size: 0.87rem; font-family: 'Inter', sans-serif;
+        transition: all 0.3s; outline: none;
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: #4b5563; }
+    .form-input:focus, .form-textarea:focus {
+        border-color: #14b8a6; background: rgba(20,184,166,0.04);
+        box-shadow: 0 0 0 3px rgba(20,184,166,0.1);
+    }
+    .form-textarea { height: 100%; min-height: 100%; resize: vertical; }
+    .btn-send {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: linear-gradient(135deg, #14b8a6, #0891b2);
+        border: none; color: white; padding: 0.8rem 2rem;
+        border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+        cursor: pointer; transition: all 0.3s; margin-top: 0.3rem;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 4px 15px rgba(20,184,166,0.3);
+        position: relative; overflow: hidden;
+    }
+    .btn-send::before {
+        content: '';
+        position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.4s;
+    }
+    .btn-send:hover::before { left: 100%; }
+    .btn-send:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(20,184,166,0.45); }
+    .alert-success {
+        background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.4);
+        border-radius: 10px; padding: 0.85rem 1.2rem;
+        color: #5eead4; font-size: 0.9rem; margin-bottom: 1rem;
+        display: flex; align-items: center; gap: 0.6rem;
+    }
+    .alert-error {
+        background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35);
+        border-radius: 10px; padding: 0.85rem 1.2rem;
+        color: #fca5a5; font-size: 0.9rem; margin-bottom: 1rem;
+        display: flex; align-items: center; gap: 0.6rem;
+    }
+    @media (max-width: 768px) {
+        .contact-section { padding: 2rem 1.5rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.5rem; }
+        .contact-grid { grid-template-columns: 1fr; }
+        .info-cards { flex-direction: row; flex-wrap: wrap; }
+        .info-card { flex: 1; min-width: 130px; }
+        .contact-form { grid-template-columns: 1fr; }
+        .form-textarea { min-height: 120px; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .contact-section { padding: 2rem; }
+        .contact-grid { grid-template-columns: 1fr; }
+        .info-cards { flex-direction: row; flex-wrap: wrap; }
+        .info-card { flex: 1; min-width: 130px; }
+        .section-title-main { font-size: 1.6rem; }
+    }
+    @media (max-width: 480px) {
+        .contact-section { padding: 1.5rem 1rem; padding-bottom: 4rem; }
+        .section-title-main { font-size: 1.3rem; }
+        .info-cards { flex-direction: column; }
+        .info-card { min-width: auto; padding: 0.9rem 1rem; }
+        .map-container { height: 130px; }
+        .form-input, .form-textarea { padding: 0.65rem 0.85rem; font-size: 0.82rem; }
+    }
+</style>
+
+<section class="contact-section">
+    <h1 class="section-title-main anim-fade-in"><span>Contact</span></h1>
+
+    <div class="contact-grid">
+        <!-- Left: Info Cards -->
+        <div class="info-cards anim-slide-up" style="animation-delay: 0.1s;">
+            <div class="info-card">
+                <div class="info-card-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="info-card-text">{{ profile.location }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon"><i class="fas fa-phone-alt"></i></div>
+                <div class="info-card-text">{{ profile.phone }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon"><i class="fas fa-envelope"></i></div>
+                <div class="info-card-text">{{ profile.email }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="info-card-text">Freelance Available</div>
+            </div>
+        </div>
+
+        <!-- Right: Map + Form -->
+        <div class="contact-right anim-slide-up" style="animation-delay: 0.2s;">
+            <div class="map-container">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1907!2d106.0588763!3d18.2253353!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31385bf9efdf6421%3A0x8a669062f23dbf32!2z%C4%90%E1%BA%A1i+L%C3%BD+Sim+Th%E1%BA%BB+-+%C4%90i%E1%BB%87n+Tho%E1%BA%A1i+H%C3%B9ng+Thu!5e0!3m2!1svi!2svn!4v1710000000000!5m2!1svi!2svn"
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+
+            <h2 class="form-section-title">How Can I <span>Help You?</span></h2>
+
+            {% if success %}
+            <div class="alert-success"><i class="fas fa-check-circle"></i> Message sent successfully! Thank you.</div>
+            {% endif %}
+            {% if error %}
+            <div class="alert-error"><i class="fas fa-exclamation-circle"></i> Failed to send. Please try again or email me directly.</div>
+            {% endif %}
+
+            <form class="contact-form" action="/contact/" method="post">
+                {% csrf_token %}
+                <div class="form-left">
+                    <input type="text" name="name" id="contact-name" class="form-input" placeholder="Full Name" required>
+                    <input type="email" name="email" id="contact-email" class="form-input" placeholder="Email Address" required>
+                    <input type="text" name="subject" id="contact-subject" class="form-input" placeholder="Subject">
+                </div>
+                <div class="form-right">
+                    <textarea name="message" id="contact-message" class="form-textarea" placeholder="Message" required></textarea>
+                </div>
+                <div style="grid-column: 1 / -1; margin-top: 0.3rem;">
+                    <button type="submit" class="btn-send" id="contact-submit">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
